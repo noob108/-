@@ -1,5 +1,6 @@
-#!/usr/bin/python
-# -*- coding:utf-8 -*-
+#-*- coding:utf-8 -*-
+# @Author : Dummerfu
+# @Time : 2020/4/25 11:21
 import requests
 import json
 import time
