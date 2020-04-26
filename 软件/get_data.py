@@ -7,23 +7,6 @@ import time
 from pyecharts.charts import Bar,Timeline
 from matplotlib import pyplot as plt
 import pandas
-from matplotlib.animation import FuncAnimation
-plt.rcParams['font.sans-serif'] = ['SimHei'] # 用来正常显示中文标签
-plt.rcParams['axes.unicode_minus'] = False # 用来正常显示负号
-class Timeinfo(object):
-    def __init__(self):
-        self.name = []  # 所有省份名称
-        # 与省份一一对应
-        self.confirm = []  # 所有省份确诊人数
-        self.heal = []  # 所有省份治愈人数
-        self.dead = []  # 所有省份死亡人数
-class Province(object):
-    def __init__(self):
-        self.name=''
-        self.confirm=[]
-        self.heal=[]
-        self.dead=[]
-        self.confirmadd=[]
 def output_to_excel(all_province_name):
     '''
         因为pandas 按列操作比较容易所以列为省份名称，行为时间数据
