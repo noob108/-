@@ -7,8 +7,8 @@ import time
 import os
 from pyecharts.charts import Bar,Line,Timeline
 from pyecharts import options as opts
-from matplotlib import pyplot as plt
 import pandas as pd
+from progressbar import ProgressBar
 from 疫情动态柱状图.nameMap import city_name_map
 
 dic={}
@@ -48,17 +48,19 @@ class Province(object):
         line=Line()
         line.add_xaxis(self.timedata)
         line.add_yaxis('确诊人数', self.confirm,label_opts=opts.LabelOpts(is_show=False), itemstyle_opts=opts.ItemStyleOpts(color='#F08080'))
-        print(self.name+'.html','已成功生成')
+        print(self.name+'.html','已成功生成到',os.getcwd())
         # 在bar的基础上画line
         bar.overlap(line).render(self.name+'.html')
 def output_to_data_frame(all_province_name):
     confirm_alllist=[]
     timelist=[]
     leng=len(all_province_name)
+    pgb=ProgressBar().start()
+    print('请等待...')
     for i,pr in enumerate(all_province_name):
         # 自动是key值
         time.sleep(0.01)
-        wait_info(i,leng)
+        pgb.update(int(i/(leng-1)*100))
         province[i].get_data(i,pr)
         dic[pr]=i
         # 找共同的时间序列 所以不需要再转excel自动补全了 缺点就是数据量减少了
@@ -69,19 +71,14 @@ def output_to_data_frame(all_province_name):
         confirm_alllist.append(province[i].confirm[-l:])
 
     confirm_frame = pd.DataFrame(confirm_alllist)
+    pgb.finish()
+    os.system('cls')
     return confirm_frame,timelist
 def get_province():
     all_province=[]
     for i in city_name_map:
         all_province.append(i)
     return all_province
-def wait_info(i, leng):
-    print('请等待...')
-    print('|', end='')
-    print('#' * i, end='')
-    print(' ' * (leng - i), end='')
-    print('|')
-    os.system('cls')
 def get_Top10info(province_name,day):
     heal_list=[]
     dead_list=[]
@@ -115,27 +112,24 @@ def print_bar(confirm_frame,timelist,all_province_name):
         bar.reversal_axis()
         tl.add(bar,timelist[i])
     name='疫情柱状图.html'
-    print(name,'已成功生成')
+    print(name,'已成功生成到',os.getcwd())
     tl.render(name)
 def output_file(confirm_frame,timelist):
-    '''
-        产生疫情excel 文件
-    :return:
-    '''
     confirm_frame.to_excel('疫情数据.xls',header=timelist,index=all_province_name)
-    print('疫情数据.xls已成功生成')
+    print('疫情数据.xls已成功生成到',os.getcwd())
     pass
 if __name__=='__main__':
+    os.system('cls')
     all_province_name=get_province()
     province=[Province() for i in range(1000)]
     confirm_frame,timelist=output_to_data_frame(all_province_name)
     print('退出程序后才会出现生成的文件')
     while 1:
-        print('如果输入 all : 生成一个所有省的动态排名柱状图\n'
-              '         get :生成一个所有省的excel疫情数据\n'
-              '         如果输入的是省份的名称则会生成一个该省的html格式的疫情数据图\n'
-              '         return :退出程序\n'        
-              '(指令不包含冒号|空格)')
+        print('         输入指令all : 生成一个所有省的动态排名柱状图\n'
+              '                 get :生成一个所有省的excel疫情数据\n'
+              '                 省份的名称:生成一个该省的疫情数据图\n'
+              '                 return :退出程序\n'        
+              '                 (指令不包含冒号|空格)')
         word=input('请输入指令...')
         if word=='all':
             print_bar(confirm_frame,timelist,all_province_name)
@@ -146,4 +140,5 @@ if __name__=='__main__':
             output_file(confirm_frame,timelist)
         if word in all_province_name:
             province[dic[word]].print_bar()
+        time.sleep(3)
         os.system('cls')
