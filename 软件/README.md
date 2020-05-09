@@ -1,4 +1,4 @@
-## 本软件名为epidemic_bar
+## 本软件名为epidemic_bar V 1.0
 ~~位于/dist文件下~~
 
 ### 输入指令 ：
